@@ -1,12 +1,34 @@
-import { ipcMain } from "electron";
+import { ipcMain, BrowserWindow } from "electron";
 import { AgentIPC } from "../agent/agent-ipc";
 import { IPCMessage } from "../../../shared/ipc-message";
 
 export class RendererIPC {
     agent: AgentIPC
+    mainWindow: BrowserWindow | null
+    windowLoaded = false
 
-    constructor(agent: AgentIPC) {
+    constructor(agent: AgentIPC, mainWindow: BrowserWindow | null) {
+        mainWindow!.webContents.once('did-finish-load', () => {
+            this.windowLoaded = true
+        })
+
         this.agent = agent
+        this.mainWindow = mainWindow
+        if(this.agent.ws) {
+            this.connectedToPython()
+        } else {
+            this.agent.readyCallback = this.connectedToPython.bind(this)
+        }
+    }
+
+    connectedToPython() {
+        if(this.windowLoaded) {
+            this.mainWindow!.webContents.send('python-ready')
+        } else {
+            this.mainWindow!.webContents.once('did-finish-load', () => {
+                this.mainWindow!.webContents.send('python-ready')
+            })
+        }
     }
 
     init() {

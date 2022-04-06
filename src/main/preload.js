@@ -13,5 +13,8 @@ contextBridge.exposeInMainWorld('electron', {
     once(channel, func) {
       ipcRenderer.once(channel, (event, ...args) => func(...args));
     },
+    pythonLoadedCallback(callback) {
+      ipcRenderer.on('python-ready', callback)
+    }
   },
 });

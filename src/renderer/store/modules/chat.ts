@@ -7,6 +7,7 @@ export interface ChatState {
   messages: Message[];
   recipient?: User;
   self?: User;
+  connected: boolean
 }
 
 export const ChatModule: Module<ChatState, any> = {
@@ -14,5 +15,11 @@ export const ChatModule: Module<ChatState, any> = {
     messages: [],
     recipient: new User('Doctor Phil (MD)', doctorPhoto),
     self: new User('You'),
+    connected: false
   },
+  getters: {
+    isConnected(state) {
+      return state.connected
+    }
+  }
 };

@@ -21,5 +21,6 @@
     "*.{css,sass,scss}.d.ts": true
   },
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  "editor.defaultFormatter": "ms-python.python",
+  "python.formatting.provider": "black"
 }

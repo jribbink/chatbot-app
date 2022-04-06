@@ -12,6 +12,10 @@ export class ChatService extends Service {
     this.receiveMessageDelay(
       'Hi, I am your virtual care consultant.  How can I help you today?'
     );
+
+    window.electron.ipcRenderer.pythonLoadedCallback(() => {
+      this.state.connected = true
+    })
   }
 
   sendMessage(message: string) {

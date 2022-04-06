@@ -27,12 +27,7 @@ dotenv.config()
      autoUpdater.checkForUpdatesAndNotify();
    }
  }
- 
- const agent_ipc = new AgentIPC(resolveBotPath('__main__.py'))
- agent_ipc.spawn()
 
- const renderer_ipc = new RendererIPC(agent_ipc)
- renderer_ipc.init()
  
  let mainWindow: BrowserWindow | null = null;
  
@@ -81,8 +76,17 @@ dotenv.config()
      icon: getAssetPath('icon.png'),
      webPreferences: {
        preload: path.join(__dirname, 'preload.js'),
+       nodeIntegration: true
      },
    });
+
+   // INIT IPC AGENT
+   const agent_ipc = new AgentIPC(resolveBotPath('__main__.py'))
+   agent_ipc.spawn()
+
+   // INIT IPC RENDERER
+   const renderer_ipc = new RendererIPC(agent_ipc, mainWindow)
+   renderer_ipc.init()
  
    mainWindow.loadURL(resolveHtmlPath('index.html'));
  

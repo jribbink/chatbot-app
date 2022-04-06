@@ -7,12 +7,11 @@ import { IPCMessage, IPCMessageType } from '../../../shared/ipc-message'
 import WebSocket from 'ws'
 import http from 'http'
 
-import './ipc-cleanup'
-
 export class AgentIPC {
     ws?: WebSocket
     callbackTable: {[id: string]: (response: IPCMessage) => void | boolean} = {}
     agentPath: string
+    readyCallback = () => {}
 
     constructor(agentPath: string) {
         this.agentPath = agentPath
@@ -49,8 +48,8 @@ export class AgentIPC {
         const server = http.createServer()
 
         wss.on('connection', (ws) => {
-            console.log("Client connected to Websocket")
             this.ws = ws
+            this.readyCallback()
             ws.on("message", (data) => {
                 this.processMessage(JSON.parse(data.toString()))
             })
