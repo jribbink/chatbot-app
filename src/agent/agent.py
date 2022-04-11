@@ -1,78 +1,39 @@
+from functools import reduce
+from time import sleep
 import nltk
 from random import randint
 from nltk.corpus import wordnet
+from neuralnet import NeuralNet
 
 
 class Agent:
     lastname = False
 
-    def __init__(self, plugins, nltk_dependencies):
+    def __init__(self, query_filters, response_filters, nltk_dependencies):
+        self.neuralnet = NeuralNet()
+
         print("Downloading nltk dependencies")
         for dependency in nltk_dependencies:
             nltk.download(dependency)
 
-        self.plugins = list(map(lambda x: x(), plugins))
+        self.query_filters = list(map(lambda x: x(), query_filters))
+        self.response_filters = list(map(lambda x: x(), response_filters))
 
     def query(self, query) -> str:
-        # return chat(query)
+        query = reduce(
+            lambda acc, x: x.parse(acc, query),
+            self.query_filters,
+            query,
+        )
 
-        print(self.plugins)
-        # TODO: Spelling Check, call a function within agent to fix the query to realistic words --GABE or whoever gets to it
-        check = self.plugins[0].parse(query)
-        # TODO Part of speach tagging --Nathan
-        pos_tag = self.plugins[1].parse(query)
-        # TODO: Named Entity Recognition: Recognize names given and append
-        ne_rec = self.plugins[2].parse(pos_tag)
-        # saying "hello" or "tell jessica to" or something to the front --GABE
-        # TODO: COReference: Figure out if the query is about the user or their patient is talking about --Jordan C
-        sentiment = self.plugins[3].parse(query)
+        resp = self.neuralnet.queryNN(query)
+        resp = reduce(
+            lambda acc, x: x.parse(acc, resp, query),
+            self.response_filters,
+            resp,
+        )
 
-        print(ne_rec)
-        print(sentiment)
-        ##TODO Sentiment for easy interchangeable sentences
-
-        ####TODODODO: Add all of the sections, and return Dr phils smart answer to the query all 3
-
-        base = chat(check)
-
-        if sentiment < -0.5:
-            oh_nos = [
-                "I'm sorry to hear that! ",
-                "That doesn't sound very good. ",
-                "I'm sorry you feel this way. ",
-                "I hope I can help you feel better! ",
-                "Hold on, we'll get you feeling better in no time! ",
-                "I'll work my hardest to help you feel better. ",
-            ]
-            base = oh_nos[randint(0, len(oh_nos) - 1)] + base
-
-        if len(ne_rec) > 0:
-            check = query.split()
-
-            if "they" in check:
-                base = "Please tell " + ne_rec[len(ne_rec) - 1] + ': "' + base + '"'
-                self.lastname = True
-
-            if "They" in check:
-                base = "Please tell " + ne_rec[len(ne_rec) - 1] + ': "' + base + '"'
-                self.lastname = True
-            if "their" in check:
-                base = "Please tell " + ne_rec[len(ne_rec) - 1] + ': "' + base + '"'
-                self.lastname = True
-
-            if "Their" in check:
-                base = "Please tell " + ne_rec[len(ne_rec) - 1] + ': "' + base + '"'
-                self.lastname = True
-
-            if "I'm" in check:
-                base = "Hello, " + ne_rec[0] + ". " + base
-        else:
-            if "They" in check:
-                base = 'Tell them: "' + base + '"'
-            if "they" in check:
-                base = 'Tell them: "' + base + '"'
-
-        return base
+        return resp
 
     def pos_tag(self, query):
         token = nltk.word_tokenize(query)
