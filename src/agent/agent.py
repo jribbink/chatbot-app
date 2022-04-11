@@ -8,6 +8,7 @@ from neuralnet import NeuralNet
 
 class Agent:
     lastname = False
+    pending_responses = []
 
     def __init__(self, query_filters, response_filters, nltk_dependencies):
         self.neuralnet = NeuralNet()
@@ -16,10 +17,17 @@ class Agent:
         for dependency in nltk_dependencies:
             nltk.download(dependency)
 
-        self.query_filters = list(map(lambda x: x(), query_filters))
-        self.response_filters = list(map(lambda x: x(), response_filters))
+        self.query_filters = list(map(lambda x: x(self), query_filters))
+        self.response_filters = list(map(lambda x: x(self), response_filters))
 
     def query(self, query) -> str:
+        if self.pending_responses:
+            resp = self.pending_responses[0][1](query)
+            self.pending_responses.pop(0)
+            if self.pending_responses:
+                return self.pending_responses[0][0]
+            return resp
+
         query = reduce(
             lambda acc, x: x.parse(acc, query),
             self.query_filters,
@@ -32,6 +40,9 @@ class Agent:
             self.response_filters,
             resp,
         )
+
+        if self.pending_responses:
+            return self.pending_responses[0][0]
 
         return resp
 

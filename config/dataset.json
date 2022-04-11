@@ -413,5 +413,35 @@
     "responses": [
       "If you ever need help again I'm always here. Get well soon!"
     ]
+  },
+  "location.hospital": {
+    "patterns": [
+      "where is the nearest hospital",
+      "I think I have an emergency",
+      "I think I am going to die",
+      "death",
+      "can't breath",
+      "emergency",
+      "I need help now immediately",
+      "I need to go to the ER"
+    ],
+    "responses": [
+      "${location.hospital}"
+    ]
+  },
+  "language.change": {
+    "patterns": [
+      "i am more comfortable in another language",
+      "i do not understand english",
+      "this language is foreign to me",
+      "do not speak langauge",
+      "can we converse in another language",
+      "change language please now",
+      "no idea how to speak in language",
+      "not my mother tongue"
+    ],
+    "responses": [
+      "${language.change}"
+    ]
   }
 }

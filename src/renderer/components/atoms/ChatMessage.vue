@@ -6,9 +6,8 @@
         <div
             class="message"
             :class="isSender?'message-self':'message-recipient'"
-        >
-            {{ message.message }}
-        </div>
+            v-html="message.message"
+        />
         <span class="pe-2 message-info">
             {{ message.sender.name }} at {{ messageTime }}
         </span>

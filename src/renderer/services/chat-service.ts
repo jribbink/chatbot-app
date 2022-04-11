@@ -31,7 +31,7 @@ export class ChatService extends Service {
   receiveMessageDelay(message: string, delay: number = 1000) {
     if (!this.state.recipient) return;
 
-    this.messagesWaiting.push({ message, delay });
+    this.messagesWaiting.push(...message.split("\n").map(message => ({message, delay})));
 
     const sendNextMessage = () => {
       if (this.messagesWaiting.length > 0) {
@@ -49,7 +49,7 @@ export class ChatService extends Service {
         }, delay);
       }
     };
-    if (this.messagesWaiting.length == 1) sendNextMessage();
+    if (this.messagesWaiting.length > 0) sendNextMessage();
   }
 
   private addMessage(message: Message) {

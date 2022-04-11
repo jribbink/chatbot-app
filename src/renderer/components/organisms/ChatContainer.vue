@@ -33,7 +33,7 @@ export default {
         '$chatService.state.connected': function (val) {
             setTimeout(() => {
                 this.doneLoading = val
-            }, 1000)
+            }, 500)
         }
     }
 }

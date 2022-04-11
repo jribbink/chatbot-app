@@ -31,7 +31,7 @@ export class AgentIPC {
             throw new Error('Python was not found in $PATH!  Please check that python3 is installed')
         }
 
-        const botScript = spawn(pythonPath, [this.agentPath, address])
+        const botScript = spawn(pythonPath, [this.agentPath, address, process.env.GCP_API_KEY!])
         botScript.stdout?.on("data", (data: Buffer) => {
             console.log("[Python3] " + data.toString('utf-8'))
         })
