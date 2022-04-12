@@ -1,4 +1,46 @@
-# 310 Project: Chatbot App
+# Individual Project Chatbot App
+This the individual assignment submission for Jordan Ribbink.
+
+## APIs Implemented
+### Google Places API
+https://github.com/slimkrazy/python-google-places
+
+"The Places API is a service that returns information about places using HTTP requests. Places are defined within this API as establishments, geographic locations, or prominent points of interest." - [Google](https://developers.google.com/maps/documentation/places/web-service/overview)
+
+In my program I use the Place Search which returns a list of places based on a user's location or search string.
+
+This simple python wrapper also implements the Google Geocoding API to convert a qualitative location string to quantitative geographic coordinates.  This step comes prior to the google places search, in order to deliver accurate results.
+
+My implementation uses the Google Places API to query all hospitals in a 20000km radius from the users given location.  It then subsequently chooses the nearest hospital and parses the full address from the API response.  A large part of this functionality is achieved via the wrapper which was used.
+
+
+### Google Directions API
+https://github.com/googlemaps/google-maps-services-python
+
+"The Directions API is a web service that uses an HTTP request to return JSON or XML-formatted directions between locations. You can receive directions for several modes of transportation, such as transit, driving, walking, or cycling." - [Google](https://developers.google.com/maps/documentation/directions/overview)
+
+The Google Directions API piggy-backs from the address data produced by the Google Places API.  Using the address of the hospital given, the Google Directions API will then produce a series of directions for the most efficient route from the users location to the destination.  I use Google's HTML directions for each step provided in the REST API response and display these one-by-one in the chat.
+
+While the API retains functionality for a wide array of transportation methods, I opt to simply use the driving mode.
+
+
+**NOTE:** Technically I probably could have done both tasks using the google-maps-services-python library, however it seemed more fitting based on project requirements that I implement two different API wrappers even if one covers both.
+
+### Chatbot "Filters" **NEW TO INDIVIDUAL PROJECT**
+A possible quandary whilst exploring the chatbot's source code would arise in the "Filters" present within the Python agent.  These are a higher-order hook whereby the value of data is hooked and modfied recursively by these "filters".
+
+For instance, our query filters iteratively apply their filter function on the user's chatbot query, leading to the final query result.
+Initial query: I need to go to the hopital
+After spellecheck filter: I need to go to the **hospital**
+next filter... modfies the last value and so on
+
+As I alluded, there are 2 different types of filters in the project:
+
+*src/agent/filters/query_filters* - represented by *src/agent/query_filter.py* abstract class which are applied to NN queries before used for prediction
+*src/agent/filters/response_filters* - represented by *src/agent/response_filter.py* abstract class which are applied to NN responses after prediction and used to add extra elements (i.e. varied prefixing based on sentiment analysis, total replacement due to arbitrary custom phrase, etc.)
+
+This filter system is fully object-oriented-compliant, as oppose to the half-baked plugin system which previously existed.  It intended to accomplish the same thing as filters, however plugins got hard-coded into the agent class leading to a violation of the encapsulation principle of object-oriented design.  This change probably wasn't necessary for the goals of the project, but it just didn't feel like clean code to me and the project felt *incomplete*.
+
 
 ## Assigment 3 note
 
